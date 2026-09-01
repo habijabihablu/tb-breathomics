@@ -6,7 +6,7 @@ import joblib
 from utils.feature import extract_features
 
 app = Flask(__name__)
-CORS(app)  # allow frontend to talk
+CORS(app,origins=["https://tb-breathomics-tawny.vercel.app"])  # allow frontend to talk
 
 # Load model
 model = joblib.load("model/tb_model.pkl")
