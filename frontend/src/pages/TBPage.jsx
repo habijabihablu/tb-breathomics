@@ -38,7 +38,7 @@ const handleUpload = async () => {
     setChartData(parsed);
 
     // 👉 API CALL
-    const res = await fetch("https://tb-breathomics.onrender.com", {
+    const res = await fetch("https://tb-breathomics.onrender.com/predict-tb", {
       method: "POST",
       body: formData,
     });
