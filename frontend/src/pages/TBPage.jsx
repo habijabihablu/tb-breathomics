@@ -34,19 +34,16 @@ const handleUpload = async () => {
         VOC: parseFloat(cols[12]),
       };
     });
-
+    
     setChartData(parsed);
-
+    
     // 👉 API CALL
-<<<<<<< HEAD
-
-=======
->>>>>>> 28c7d7ec7c306a0ac58b689a97d8f4636df4f89b
-    const res = await fetch("https://tb-breathomics.onrender.com", {
+    const res = await fetch("https://tb-breathomics.onrender.com/predict-tb", {
       method: "POST",
       body: formData,
     });
 
+    
     const data = await res.json();
     setResult(data);
 
