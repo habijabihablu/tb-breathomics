@@ -3,7 +3,7 @@ from flask_cors import CORS
 import pandas as pd
 import joblib
 
-from utils.feature import extract_features
+from utils.feature import extract_features, SENSOR_COLUMNS, TIME_COL
 
 app = Flask(__name__)
 CORS(app,origins=["https://tb-breathomics-tawny.vercel.app"])  # allow frontend to talk
@@ -27,22 +27,23 @@ def predict_tb():
         else:
             df = pd.read_excel(file)
 
-        # Expected sensor columns
-        expected_cols = ['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','S11','VOC']
+        # Normalize column names to uppercase to handle inconsistent casing
+        df.columns = [c.upper() for c in df.columns]
 
-        # Drop time
-        if "Time" in df.columns:
-            df = df.drop(columns=["Time"])
+        # Drop time and temperature (not used by the model)
+        for col in ["T", "TIME", "TEMP"]:
+            if col in df.columns:
+                df = df.drop(columns=[col])
 
-        # Check columns
-        if not all(col in df.columns for col in expected_cols):
+        # Required columns: time + all sensor columns used in training
+        # (Temp, if present in the uploaded file, is simply ignored)
+        required_cols = [TIME_COL] + SENSOR_COLUMNS
+
+        if not all(col in df.columns for col in required_cols):
             return jsonify({"error": "Invalid file format"})
 
-        # Reorder
-        df = df[expected_cols]
-
-        # Extract features
-        features = extract_features(df)
+        # Extract features in the exact order the model was trained on
+        features = extract_features(df, sensor_cols=SENSOR_COLUMNS, time_col=TIME_COL)
 
         # Scale
         features_scaled = scaler.transform(features)
