@@ -27,13 +27,7 @@ def predict_tb():
         else:
             df = pd.read_excel(file)
 
-        # Normalize column names to uppercase to handle inconsistent casing
-        df.columns = [c.upper() for c in df.columns]
-
-        # Drop time and temperature (not used by the model)
-        for col in ["T", "TIME", "TEMP"]:
-            if col in df.columns:
-                df = df.drop(columns=[col])
+        
 
         # Required columns: time + all sensor columns used in training
         # (Temp, if present in the uploaded file, is simply ignored)
